@@ -1,0 +1,15 @@
+{
+  "name": "solid-form-action",
+  "version": "0.1.0",
+  "private": false,
+  "devDependencies": {
+    "solid-js": "^0.24.13",
+    "typescript": "4.2.3"
+  },
+  "main": "build/form_action.js",
+  "types": "build/form_action.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch"
+  }
+}
