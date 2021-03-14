@@ -63,12 +63,10 @@ export function createFormActions<T extends InitialValues>(props: ActionFormProp
         el.value = val;
       }
       const listener = (event: Event) => {
-        const state = formState;
         if (index === undefined) {
           setFormState(key, el.value);
-          //          setFormState({ ...state, [key]: el.value });
         } else {
-          const arr = state[key] as string[];
+          const arr = [...formState[key] as string[]];
           arr[index] = el.value;
           setFormState(key, arr);
         }
@@ -83,16 +81,13 @@ export function createFormActions<T extends InitialValues>(props: ActionFormProp
         ...listHelpers,
         [`${key}Helper`]: {
           add(index: number) {
-            const state = formState;
-            const list = state[key] as string[];
-            list.splice(index, 0, val[0]);
-            setFormState(key, list);
+            const list = formState[key] as string[];
+            setFormState(key, [...list.slice(0, index), val[0], ...list.slice(index)]);
           },
           remove(index: number) {
-            const state = formState;
-            const list = state[key] as string[];
+            const list = formState[key] as string[];
             list.splice(index, 1);
-            setFormState(key, list);
+            setFormState(key, [...list.slice(0, index), ...list.slice(index + 1)]);
           }
         }
       }
