@@ -1,6 +1,6 @@
 {
   "name": "solid-form-action",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": false,
   "dependencies": {
     "solid-js": "^0.24.0"
@@ -10,6 +10,7 @@
   },
   "main": "build/form_action.js",
   "types": "build/form_action.d.ts",
+  "license": "MIT",
   "readme": "https://github.com/mosheduminer/solid-form-action/blob/master/README.md",
   "repository": {
     "type": "git",
