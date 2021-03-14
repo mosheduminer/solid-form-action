@@ -67,8 +67,8 @@ const Form: Component = () => {
           <>
             <label>Multi Input:
               <input ref={(ref) => multiInput(ref, index())} value={item} />
-              <button type="button" onClick={() => { multiInputHelper?.remove(index()) }}>-</button>
-              <button type="button" onClick={() => { multiInputHelper?.add(index()) }}>+</button>
+              <button type="button" onClick={() => { multiInputHelper.remove(index()) }}>-</button>
+              <button type="button" onClick={() => { multiInputHelper.add(index()) }}>+</button>
             </label>
             {/* show errors if applicable */}
             {errors.multiInput?.[index()]

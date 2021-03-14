@@ -17,9 +17,8 @@ export type Errors<T> = {
   [key in keyof T]?: string | string[] | undefined;
 }
 
-// TODO: add constraint that `T[key]` is an array, and make the field unoptional
 export type ListHelpers<T> = {
-  [key in keyof T & string as `${key}Helper`]?: T[key] extends any[] ? { add: (index: number) => void, remove: (index: number) => void } : never;
+  [key in keyof T & string as `${key}Helper`]: T[key] extends any[] ? { add: (index: number) => void, remove: (index: number) => void } : never;
 }
 
 function clone<T extends InitialValues>(obj: T): T {
@@ -114,13 +113,12 @@ export function createFormActions<T extends InitialValues>(props: ActionFormProp
       el.removeEventListener("submit", listener);
     });
   }
-  const actions = partialActions as Actions<T>;
   return {
     formState: formState as State<T>,
-    actions,
+    actions: partialActions as Actions<T>,
     form,
     errors,
-    listHelpers,
+    listHelpers: listHelpers as ListHelpers<T>,
     reset: (event: MouseEvent) => {
       setErrors(defaultErrors);
       setFormState(clone(initialValues));
