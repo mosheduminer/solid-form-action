@@ -14,17 +14,7 @@ function App() {
     </div>
   );
 }
-/*
-declare module 'solid-js' {
-  // eslint-disable-next-line @typescript-eslint/no-namespace
-  namespace JSX {
-    interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {
-      ['use:title']?: boolean;
-      ['use:form']?: boolean;
-    }
-  }
-}
-*/
+
 const Form: Component = () => {
   const {
     actions: { title, multiInput },
@@ -68,7 +58,7 @@ const Form: Component = () => {
   });
 
   return (
-    <form ref={form} style={{ display: "flex", "flex-direction": "column" }}>
+    <form use:form style={{ display: "flex", "flex-direction": "column" }}>
       <label>
         Title:
         {/* set the value with formState(), this sets the initial value to the value specified in initialValues,

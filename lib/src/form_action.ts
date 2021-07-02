@@ -1,5 +1,5 @@
-import { createState, onCleanup } from 'solid-js';
-import type { State } from 'solid-js';
+import { onCleanup } from 'solid-js';
+import { createStore, Store } from 'solid-js/store';
 
 type InitialValues = { [key: string]: string | string[] };
 
@@ -35,10 +35,10 @@ function clone<T extends InitialValues>(obj: T): T {
 }
 
 type returnType<T> = {
-  formState: State<T>;
+  formState: Store<T>;
   actions: Actions<T>;
   form: (el: HTMLFormElement) => void;
-  errors: State<Errors<T>>;
+  errors: Store<Errors<T>>;
   listHelpers: ListHelpers<T>;
   reset: (event: MouseEvent) => void;
 }
@@ -48,7 +48,7 @@ export function createFormActions<T extends InitialValues>(props: ActionFormProp
   // The type T is replaced everywhere internally with InitialValues, and casts to InitialValues.
   // This is because of an issue with the typings of setState in solid.
   const initialValues = clone(props.initialValues);
-  const [formState, setFormState] = createState(clone(initialValues) as InitialValues);
+  const [formStore, setFormStore] = createStore(clone(initialValues) as InitialValues);
   const partialActions: Partial<Actions<InitialValues>> = {};
   const defaultErrors: Partial<Errors<InitialValues>> = {};
   let listHelpers: ListHelpers<InitialValues> = {};
@@ -64,11 +64,11 @@ export function createFormActions<T extends InitialValues>(props: ActionFormProp
       }
       const listener = (event: Event) => {
         if (index === undefined) {
-          setFormState(key, el.value);
+          setFormStore(key, el.value);
         } else {
-          const arr = [...formState[key] as string[]];
+          const arr = [...formStore[key] as string[]];
           arr[index] = el.value;
-          setFormState(key, arr);
+          setFormStore(key, arr);
         }
       };
       el.addEventListener("change", listener);
@@ -81,26 +81,26 @@ export function createFormActions<T extends InitialValues>(props: ActionFormProp
         ...listHelpers,
         [`${key}Helper`]: {
           add(index: number) {
-            const list = formState[key] as string[];
-            setFormState(key, [...list.slice(0, index), val[0], ...list.slice(index)]);
+            const list = formStore[key] as string[];
+            setFormStore(key, [...list.slice(0, index), val[0], ...list.slice(index)]);
           },
           remove(index: number) {
-            const list = formState[key] as string[];
+            const list = formStore[key] as string[];
             list.splice(index, 1);
-            setFormState(key, [...list.slice(0, index), ...list.slice(index + 1)]);
+            setFormStore(key, [...list.slice(0, index), ...list.slice(index + 1)]);
           }
         }
       }
     }
   }
-  const [errors, setErrors] = createState<Errors<T>>({});
+  const [errors, setErrors] = createStore<Errors<T>>({});
   const form = (el: HTMLFormElement) => {
     const listener = (event: Event) => {
       event.preventDefault();
-      const errs = props.validate(formState as T);
+      const errs = props.validate(formStore as T);
       setErrors({ ...defaultErrors, ...errs });
       if (Object.keys(errs).length == 0) {
-        props.onSubmit(formState as T);
+        props.onSubmit(formStore as T);
       }
     };
     el.addEventListener("submit", listener);
@@ -109,15 +109,24 @@ export function createFormActions<T extends InitialValues>(props: ActionFormProp
     });
   }
   return {
-    formState: formState as State<T>,
+    formState: formStore as Store<T>,
     actions: partialActions as Actions<T>,
     form,
     errors,
     listHelpers: listHelpers as ListHelpers<T>,
     reset: (event: MouseEvent) => {
       setErrors(defaultErrors);
-      setFormState(clone(initialValues));
+      setFormStore(clone(initialValues));
       event.preventDefault();
     },
   };
+}
+
+declare module 'solid-js' {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace JSX {
+    interface Directives {
+      form?: boolean;
+    }
+  }
 }
